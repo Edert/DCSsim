@@ -1,5 +1,6 @@
 # DCSsim
 
-DCSsim.py BAM BED TXT INT BAM,... [options]
+DCSsim.py FASTA BED INT [options]
 
-Based on the input BAM file, differential-peaks will be simulated in the provided BED regions, TXT chromosmes to be used and their length tab separated, INT defines the number of simulated replicates of the two samples, the input/control Bam files BAM,... comma-separated, will be used to create an input/control Bam file for the simulation.
+Based on the provided FASTA sequence differential peaks (DPs) are simulated, restricted to if --is_white_list or constrained by the specified BED>file.
+INT defines the number of simulated replicates of the two samples.
