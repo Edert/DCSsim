@@ -542,9 +542,11 @@ class Protein(object):
 			#get number of fragments per protein
 			#is_outlier = np.random.choice([True, False], size=1,p=[frag_count_op,1-frag_count_op]) #slow version...
 			if(np.random.random() <= frag_count_op):
-				self.number_frags  = np.random.lognormal(mean=frag_count_om,sigma=frag_count_os,size=1) #if yes, it is taken from the gamma
+				self.number_frags = np.random.lognormal(mean=frag_count_om,sigma=frag_count_os,size=1) #if yes, it is taken from the gamma
 			else:
-				self.number_frags  = np.random.gamma(shape=frag_count_sh,scale=frag_count_sc,size=1) #if no, from the lognormal distribution
+				self.number_frags = np.random.gamma(shape=frag_count_sh,scale=frag_count_sc,size=1) #if no, from the lognormal distribution
+			
+			self.number_frags = max(1, int(self.number_frags)) #make sure its 1 or more and an int
 			
 			for _ in lrange(self.number_frags):
 				
