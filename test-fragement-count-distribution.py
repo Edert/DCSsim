@@ -75,12 +75,12 @@ if __name__ == '__main__':
 	num_args = 1
 	
 	#read in required input arguments
-	ngenes = int(args[0])
+	nfragments = int(args[0])
 	
 	binwidth=2
 	
-	s2 = np.random.gamma(shape=options.frag_count_sh,scale=options.frag_count_sc,size=ngenes)
-	is_outlier = np.random.choice([True, False], size=ngenes,p=[options.frag_count_op,1-options.frag_count_op])
+	s2 = np.random.gamma(shape=options.frag_count_sh,scale=options.frag_count_sc,size=nfragments)
+	is_outlier = np.random.choice([True, False], size=nfragments,p=[options.frag_count_op,1-options.frag_count_op])
 	s3 = np.random.lognormal(mean=options.frag_count_om,sigma=options.frag_count_os,size=is_outlier.sum())
 	sc = []
 	sc.extend(s2)
