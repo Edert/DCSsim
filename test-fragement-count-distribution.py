@@ -4,7 +4,7 @@
 """
 %prog <INT> [options]
 
-Creates histograms of <INT> fragments count distribution
+Creates a histogram of <INT> fragments count distribution
 
 @author:  Thomas Eder
 """
