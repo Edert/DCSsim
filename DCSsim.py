@@ -547,7 +547,7 @@ class Protein(object):
 				self.number_frags = np.random.gamma(shape=frag_count_sh,scale=frag_count_sc,size=1) #if no, from the lognormal distribution
 			
 			self.number_frags = max(1, int(self.number_frags)) #make sure its 1 or more and an int
-			self.number_frags = self.number_frags * (self.n_reps_sample1 + self.n_reps_sample2) #we will distributie the fragments to two samples with x replicates
+			self.number_frags = self.number_frags * (self.n_replicates_sample1 + self.n_replicates_sample1) #we will distributie the fragments to two samples with x replicates
 			
 			for _ in lrange(self.number_frags):
 				
