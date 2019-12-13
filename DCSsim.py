@@ -19,6 +19,7 @@ import time
 import datetime
 import HTSeq
 import numpy as np
+import scipy as sp
 import multiprocessing as mp
 import matplotlib.pyplot as plt
 
@@ -62,8 +63,8 @@ class Parameters:
 	"""Class to store the main init parameters."""
 	def __init__(self, sequence, valid_regions, bins, n_reps_sample1, n_reps_sample2, prot_count_n, prot_count_p, protein_size,\
 	frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov,\
-	frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, beta_values, frag_len_mean, \
-	frag_len_dev, skewness, valid_regions_array):
+	frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, \
+	beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array):
 		
 		self.sequence = sequence
 		self.valid_regions = valid_regions
@@ -81,6 +82,10 @@ class Parameters:
 		self.frag_count_op = frag_count_op
 		self.frag_count_om = frag_count_om
 		self.frag_count_os = frag_count_os
+		self.frag_count_scaling = frag_count_scaling
+		self.frag_count_lp_sc = frag_count_lp_sc
+		self.frag_count_ln_si = frag_count_ln_si
+		self.frag_count_ln_sc = frag_count_ln_sc
 		self.beta_values = beta_values
 		self.frag_len_mean = frag_len_mean
 		self.frag_len_dev = frag_len_dev
@@ -96,7 +101,8 @@ class Parameters:
 		return self.sequence, self.valid_regions, self.bins ,self.n_reps_sample1, self.n_reps_sample2, self.prot_count_n, self.prot_count_p, \
 		self.protein_size, self.frag_len_max, self.frag_dist_on, self.frag_dist_mn_mean, self.frag_dist_mn_cov, self.frag_dist_prob, self.prot_dist_mn_mean, \
 		self.prot_dist_mn_cov, self.frag_count_sh, self.frag_count_sc, self.frag_count_op, self.frag_count_om, self.frag_count_os, \
-		self.beta_values, self.frag_len_mean, self.frag_len_dev, self.skewness, self.valid_regions_array
+		self.frag_count_scaling, self.frag_count_lp_sc, self.frag_count_ln_si, self.frag_count_ln_sc, self.beta_values, self.frag_len_mean, \
+		self.frag_len_dev, self.skewness, self.valid_regions_array
 
 class Report_data:
 	"""Class to store report data"""
@@ -198,7 +204,7 @@ class Chromosome(object):
 
 	def init_domains(self, n_domains_start, n_domains, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 	frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-	beta_values, frag_len_mean, frag_len_dev, skewness):
+	frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness):
 		
 		"""Creates n_domains on the sequence"""
 		j = 0
@@ -216,7 +222,8 @@ class Chromosome(object):
 			#create obj to store all parameters
 			parameterobj = Parameters(self.sequence, self.valid_regions, self.bins, self.n_reps_sample1, self.n_reps_sample2, prot_count_n, prot_count_p,\
 			protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, \
-			frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array)
+			frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, \
+			beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array)
 			
 			if (self.threads > 1): #use  multiple processes
 				
@@ -359,7 +366,7 @@ class Domain(object):
 
 	def init_proteins(self, genome_sequence, valid_regions, bins, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean,\
 	frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os,\
-	beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array):
+	frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array):
 		"""Creates n_proteins of proteins in the domain range"""
 		if(len(self.protein_list) == 0):
 			
@@ -381,7 +388,8 @@ class Domain(object):
 				proteinobj = Protein(pos, self.n_reps_sample1, self.n_reps_sample2, self.name, prot_count)
 				
 				#init all fragments in that protein
-				proteinobj.init_fragments(genome_sequence, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os,beta_values, \
+				proteinobj.init_fragments(genome_sequence, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
+				frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, \
 				frag_len_mean, frag_len_dev, frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, protein_size, skewness)
 				
 				#add to list
@@ -526,8 +534,9 @@ class Protein(object):
 		self.sample1_replicate_list = [[] for i in lrange(self.n_replicates_sample1)]
 		self.sample2_replicate_list = [[] for i in lrange(self.n_replicates_sample2)]
 
-	def init_fragments(self, genome_sequence, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, beta_values,\
-	 frag_len_mean, frag_len_dev, frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, protein_size, skewness):
+	def init_fragments(self, genome_sequence, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
+	frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, \
+	frag_len_mean, frag_len_dev, frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, protein_size, skewness):
 		"""Creates n_fragments in this protein"""
 		if(self.fragment_count == 0 ):
 			min_protein_pos = 0
@@ -536,18 +545,36 @@ class Protein(object):
 			sample2_list = []
 			sample1_count = 0
 			sample2_count = 0
-			
-			read_frac = np.random.beta(beta_values[0], beta_values[1]) #get read fraction for sample1 (sample2 = 1-x)
+			loc = 0.5
+			scale = 0.5
 			
 			#get number of fragments per protein
-			#is_outlier = np.random.choice([True, False], size=1,p=[frag_count_op,1-frag_count_op]) #slow version...
 			if(np.random.random() <= frag_count_op):
 				self.number_frags = np.random.lognormal(mean=frag_count_om,sigma=frag_count_os,size=1) #if yes, it is taken from the gamma
 			else:
 				self.number_frags = np.random.gamma(shape=frag_count_sh,scale=frag_count_sc,size=1) #if no, from the lognormal distribution
 			
-			self.number_frags = max(1, int(self.number_frags)) #make sure its 1 or more and an int
-			self.number_frags = self.number_frags * (self.n_replicates_sample1 + self.n_replicates_sample1) #we will distributie the fragments to two samples with x replicates
+			self.number_frags = max(1, int(self.number_frags)) #set to 1 or more
+			
+			#get read fraction for sample1 (sample2 = 1-x)
+			read_frac = np.random.beta(options.beta_values[0], options.beta_values[1]) 
+			
+			
+			#now choose which way we want to select the number of fragments
+			if( frag_count_scaling == "none"):
+				#no scaling, no changes in nfrags and beta
+				self.number_frags = self.number_frags
+				read_frac = read_frac
+			elif (frag_count_scaling == "beta") :#nfrags scaling via Laplace, beta not changed
+				self.number_frags = self._scale_laplace(self.number_frags, read_frac, frag_count_lp_sc)
+			elif (frag_count_scaling == "frag") :#nfrags scaling via lognorm distribution, number_frags not changed
+				read_frac = self._scale_lognorm(self.number_frags, read_frac, frag_count_ln_si, frag_count_ln_sc)
+			else:
+				print("Unknown scaling method, %s, please choose 'none','frag' or 'beta', exiting now" % (frag_count_scaling))
+				exit(1)
+			
+			#we will distribute the fragments to two samples with x replicates
+			self.number_frags = self.number_frags * (self.n_replicates_sample1 + self.n_replicates_sample2) 
 			
 			for _ in lrange(self.number_frags):
 				
@@ -599,12 +626,35 @@ class Protein(object):
 		
 		return replicate_list, replicate_counts #return number of fragments per replicate
 
-	#def _sample_neg_bin(self, n, p):
-	#	"""Sample negative binomial distribution"""
-	#	#n = (mean * mean) / (dev - mean)
-	#	#p = mean / dev
-	#	return np.random.negative_binomial(n, p) 
-
+	def _scale_laplace(self, nfrags, read_frac, scale):
+		"""Scale beta result based on Laplace distribution"""
+		loc = 0.5 #fixed
+		
+		top_nfrgs_scale = laplace.pdf(0.5, loc, scale)#make sure at postion 0.5 is 100%
+		scale_factor = 1 / top_nfrgs_scale
+		nfrags_scale = laplace.pdf(read_frac, loc, scale) *scale_factor #the bigger the difference from beta the smaller the sample...
+		
+		if(nfrags_scale == 0):
+			nfrags = nfrags 
+		else:
+			nfrags = int(nfrags *nfrags_scale) #new fragment scaling based on beta result
+			
+		return nfrags
+		
+	def _scale_lognorm(self, nfrags, read_frac, sigma, scale):
+		"""Scale number_frags result based on Lognorm distribution"""
+		loc=scale*-1
+		
+		top_beta_scale = sp.stats.lognorm.pdf(1,s=sigma,loc=loc, scale=scale)#to get to 100% at size 10
+		scale_factor=1/top_beta_scale #this is the factor to set beta_frac to 100% at 1
+		beta_scale = sp.stats.lognorm.pdf(nfrags,s=sigma,loc=loc, scale=scale) *scale_factor
+		
+		if(beta_scale == 0):
+			read_frac = read_frac 
+		else:
+			read_frac = ((read_frac-0.5)*beta_scale)+0.5 #center and scale it based on beta_scale from exponential distri, so reduce to 0.5 for high values
+		return read_frac
+		
 	def _get_factor(self, x, loc=0.5, scale=0.2):
 		"""laplace distribution for distribution into replicates"""
 		return laplace.pdf(x, loc, scale)
@@ -932,12 +982,13 @@ def _init_add_domains_mp(counter, parametersobj, results_list):
 			break
 		sequence, valid_regions, bins, n_reps_sample1, n_reps_sample2, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 		frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-		beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array = parametersobj.get_all()
+		frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, \
+		valid_regions_array = parametersobj.get_all()
 		
 		domainobj = Domain(n_reps_sample1, n_reps_sample2, domain_number) #init one domain
 		domainobj.init_proteins(sequence, valid_regions, bins, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 		frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-		beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array) #init all proteins in that domain
+		frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array) #init all proteins in that domain
 		
 		tmp_results_list.append(domainobj) #save object in tmp list
 	
@@ -953,12 +1004,13 @@ def _init_add_domains(parametersobj, n_domains_start, n_domains):
 	for domain_number in lrange(n_domains_start + 1, n_domains_start + n_domains + 1):
 		sequence, valid_regions, bins, n_reps_sample1, n_reps_sample2, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 		frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-		beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array = parametersobj.get_all()
+		frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, \
+		valid_regions_array = parametersobj.get_all()
 		
 		domainobj = Domain(n_reps_sample1, n_reps_sample2, domain_number) #init one domain
 		domainobj.init_proteins(sequence, valid_regions, bins, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 		frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-		beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array) #init all proteins in that domain
+		frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array) #init all proteins in that domain
 		
 		results_list.append(domainobj) #save object in tmp list
 		_progress_bar(domain_count, n_domains)
@@ -1057,11 +1109,6 @@ def _write_output(chromosome, min_counts, dp_thres, prefix, append = False):
 			else: #not meeting user defined DP parameters or is not up in either sample
 				all_peaks.append((protein, 0, ("d" + str(protein.domain_name) + "p" + str(protein.name))))
 	
-	#sort only usefull if we are not working in batches
-	#db_peaks_sample1.sort()
-	#db_peaks_sample2.sort()
-	#all_peaks.sort()
-	
 	#print
 	print("Writing peaks to bed file: %s" % (prefix + "_sample1-peaks.bed"))
 	_write_bed(chromosome, db_peaks_sample1, prefix + "_sample1-peaks.bed", append)
@@ -1084,7 +1131,7 @@ def _write_bed(chromosome, protein_list, filename, append):
 	
 	for prot in protein_list:
 		bedfile.write("%s\t%s\t%s\n" %(chromosome.name, prot.start, prot.stop))
-		
+
 def _write_bed_all(chromosome, protein_list_plus, filename, append):
 	"""Write bedfile with allpeaks."""
 	if(append):
@@ -1328,6 +1375,11 @@ if __name__ == '__main__':
 	parser.add_option("--frag-count-om", default=6., dest="frag_count_om", type="float", help="Mean of lognormal distribution for fragment counts of outliers [default: %default]")
 	parser.add_option("--frag-count-os", default=0.5, dest="frag_count_os", type="float", help="Sigma of lognormal distribution for fragment counts of outliers [default: %default]")
 	
+	parser.add_option("--frag-count-scaling", default="none", dest="frag_count_scaling", type="string", help="Scaling of fragment distribution, no scaling, scaling based on the fragment counts (with laplace) or scaling based on the beta result (with lognorm): none , frag , beta [default: %default]")
+	parser.add_option("--frag-count-lp-scale", default=0.1, dest="frag_count_lp_sc", type="float", help="Scale for Laplace distribution if frag-count-scaling is frag [default: %default]")
+	parser.add_option("--frag-count-ln-sigma", default=0.9, dest="frag_count_ln_si", type="float", help="Sigma for lognorm distribution if frag-count-scaling is beta [default: %default]")
+	parser.add_option("--frag-count-ln-scale", default=100, dest="frag_count_ln_sc", type="float", help="Scale for lognorm distribution if frag-count-scaling is beta [default: %default]")
+	
 	parser.add_option("--frag-dist-on", default=False, action="store_true", dest="frag_dist_on", help="Use multivariate normal distribution for fragment shifts to create peak chapes, shifts are limited by prot-size. The final shift is: postion of peak - prot_size + sampling from distribution [default: %default]")
 	parser.add_option("--frag-dist-prob", default=[0.5, 0.5], dest="frag_dist_prob", type="string", action='callback', callback=_callback_list_float,\
 	help="Probability fo each of the multivariate normal distributions to be chosen [default: %default]")
@@ -1384,7 +1436,10 @@ if __name__ == '__main__':
 		parser.error("Mean of lognormal distribution for fragment counts of outliers %s should be positive" % (options.frag_count_om))
 	if not (options.frag_count_os > 0):
 		parser.error("Sigma of lognormal distribution for fragment counts of outliers %s needs to be > 0" % (options.frag_count_os))
-		
+	
+	if not (options.frag_count_scaling == "none" or options.frag_count_scaling == "frag" or options.frag_count_scaling == "beta"):
+		parser.error("frag_count_scaling %s must ether be 'none', 'frag' or 'beta'" % (options.frag_count_scaling))
+	
 	if not (options.frag_len_max > options.frag_len_mean): 
 		parser.error("Fragment length max %s needs to be bigger than the mean %s" % (options.frag_len_max, options.frag_len_mean))
 	if (options.min_counts < 1):
@@ -1469,8 +1524,10 @@ if __name__ == '__main__':
 			#create domains, proteins and fragments
 			chromosomeobj.init_domains(domain_count, n_domains, options.prot_count_n, options.prot_count_p, options.protein_size, options.frag_len_max,\
 			options.frag_dist_on, options.frag_dist_mn_mean, options.frag_dist_mn_cov,  options.frag_dist_prob, options.prot_dist_mn_mean, options.prot_dist_mn_cov,\
-			options.frag_count_sh,options.frag_count_sc,options.frag_count_op,options.frag_count_om,options.frag_count_os,\
-			options.beta_values, options.frag_len_mean, options.frag_len_dev, options.skewness)
+			options.frag_count_sh, options.frag_count_sc, options.frag_count_op, options.frag_count_om, options.frag_count_os, options.frag_count_scaling, \
+			options.frag_count_lp_sc, options.frag_count_ln_si, options.frag_count_ln_sc, options.beta_values, options.frag_len_mean, options.frag_len_dev, \
+			options.skewness)
+			
 			domain_count += n_domains
 
 			#save results (objects of chromosome, proteins and fragments) into sample1 and sample2
@@ -1567,9 +1624,6 @@ if __name__ == '__main__':
 		
 	except KeyboardInterrupt:
 		print("Interrupted by user")
-	#except Exception as e:
-	#	print("got exception: %r" % (e,))
-	#	exit()
 
 	time_hhmmss = prog_timer.get_time_hhmmss()
 	print ("Time elapsed for simulation: %s" % (time_hhmmss))
