@@ -1374,9 +1374,9 @@ if __name__ == '__main__':
 	parser.add_option("--frag-count-os", default=0.5, dest="frag_count_os", type="float", help="Sigma of lognormal distribution for fragment counts of outliers [default: %default]")
 	
 	parser.add_option("--frag-count-scaling", default="none", dest="frag_count_scaling", type="string", help="Scaling of fragment distribution, no scaling, scaling of beta result based on fragment counts (with lognorm) or scaling of fragment counts based on beta result (with laplace) : none , frag , beta [default: %default]")
-	parser.add_option("--frag-count-lp-scale", default=0.1, dest="frag_count_lp_sc", type="float", help="Scale for Laplace distribution if frag-count-scaling is frag [default: %default]")
-	parser.add_option("--frag-count-ln-sigma", default=0.9, dest="frag_count_ln_si", type="float", help="Sigma for lognorm distribution if frag-count-scaling is beta [default: %default]")
-	parser.add_option("--frag-count-ln-scale", default=100, dest="frag_count_ln_sc", type="float", help="Scale for lognorm distribution if frag-count-scaling is beta [default: %default]")
+	parser.add_option("--frag-count-lp-scale", default=0.1, dest="frag_count_lp_sc", type="float", help="Scale for Laplace distribution if frag-count-scaling is beta [default: %default]")
+	parser.add_option("--frag-count-ln-sigma", default=0.9, dest="frag_count_ln_si", type="float", help="Sigma for lognorm distribution if frag-count-scaling is frag [default: %default]")
+	parser.add_option("--frag-count-ln-scale", default=100, dest="frag_count_ln_sc", type="float", help="Scale for lognorm distribution if frag-count-scaling is frag [default: %default]")
 	
 	parser.add_option("--frag-dist-on", default=False, action="store_true", dest="frag_dist_on", help="Use multivariate normal distribution for fragment shifts to create peak chapes, shifts are limited by prot-size. The final shift is: postion of peak - prot_size + sampling from distribution [default: %default]")
 	parser.add_option("--frag-dist-prob", default=[0.5, 0.5], dest="frag_dist_prob", type="string", action='callback', callback=_callback_list_float,\
