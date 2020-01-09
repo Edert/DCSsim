@@ -63,8 +63,8 @@ class Parameters:
 	"""Class to store the main init parameters."""
 	def __init__(self, sequence, valid_regions, bins, n_reps_sample1, n_reps_sample2, prot_count_n, prot_count_p, protein_size,\
 	frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov,\
-	frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, \
-	beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array):
+	frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, frag_count_scaling, frag_count_lp_sc, \
+	frag_count_ex_lo,  frag_count_ex_sc, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array):
 		
 		self.sequence = sequence
 		self.valid_regions = valid_regions
@@ -84,8 +84,8 @@ class Parameters:
 		self.frag_count_os = frag_count_os
 		self.frag_count_scaling = frag_count_scaling
 		self.frag_count_lp_sc = frag_count_lp_sc
-		self.frag_count_ln_si = frag_count_ln_si
-		self.frag_count_ln_sc = frag_count_ln_sc
+		self.frag_count_ex_lo = frag_count_ex_lo
+		self.frag_count_ex_sc = frag_count_ex_sc
 		self.beta_values = beta_values
 		self.frag_len_mean = frag_len_mean
 		self.frag_len_dev = frag_len_dev
@@ -101,8 +101,8 @@ class Parameters:
 		return self.sequence, self.valid_regions, self.bins ,self.n_reps_sample1, self.n_reps_sample2, self.prot_count_n, self.prot_count_p, \
 		self.protein_size, self.frag_len_max, self.frag_dist_on, self.frag_dist_mn_mean, self.frag_dist_mn_cov, self.frag_dist_prob, self.prot_dist_mn_mean, \
 		self.prot_dist_mn_cov, self.frag_count_sh, self.frag_count_sc, self.frag_count_op, self.frag_count_om, self.frag_count_os, \
-		self.frag_count_scaling, self.frag_count_lp_sc, self.frag_count_ln_si, self.frag_count_ln_sc, self.beta_values, self.frag_len_mean, \
-		self.frag_len_dev, self.skewness, self.valid_regions_array
+		self.frag_count_scaling, self.frag_count_lp_sc, self.frag_count_ex_lo, self.frag_count_ex_sc, \
+		self.beta_values, self.frag_len_mean, self.frag_len_dev, self.skewness, self.valid_regions_array
 
 class Report_data:
 	"""Class to store report data"""
@@ -204,7 +204,7 @@ class Chromosome(object):
 
 	def init_domains(self, n_domains_start, n_domains, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 	frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-	frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness):
+	frag_count_scaling, frag_count_lp_sc, frag_count_ex_lo, frag_count_ex_sc, beta_values, frag_len_mean, frag_len_dev, skewness):
 		
 		"""Creates n_domains on the sequence"""
 		j = 0
@@ -222,8 +222,8 @@ class Chromosome(object):
 			#create obj to store all parameters
 			parameterobj = Parameters(self.sequence, self.valid_regions, self.bins, self.n_reps_sample1, self.n_reps_sample2, prot_count_n, prot_count_p,\
 			protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, \
-			frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, \
-			beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array)
+			frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, frag_count_scaling, frag_count_lp_sc, \
+			frag_count_ex_lo, frag_count_ex_sc, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array)
 			
 			if (self.threads > 1): #use  multiple processes
 				
@@ -366,7 +366,8 @@ class Domain(object):
 
 	def init_proteins(self, genome_sequence, valid_regions, bins, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean,\
 	frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os,\
-	frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array):
+	frag_count_scaling, frag_count_lp_sc, frag_count_ex_lo, frag_count_ex_sc, beta_values, frag_len_mean, frag_len_dev, \
+	skewness, valid_regions_array):
 		"""Creates n_proteins of proteins in the domain range"""
 		if(len(self.protein_list) == 0):
 			
@@ -389,7 +390,7 @@ class Domain(object):
 				
 				#init all fragments in that protein
 				proteinobj.init_fragments(genome_sequence, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-				frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, \
+				frag_count_scaling, frag_count_lp_sc, frag_count_ex_lo, frag_count_ex_sc, beta_values, \
 				frag_len_mean, frag_len_dev, frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, protein_size, skewness)
 				
 				#add to list
@@ -535,7 +536,7 @@ class Protein(object):
 		self.sample2_replicate_list = [[] for i in lrange(self.n_replicates_sample2)]
 
 	def init_fragments(self, genome_sequence, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-	frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, \
+	frag_count_scaling, frag_count_lp_sc, frag_count_ex_lo, frag_count_ex_sc, beta_values, \
 	frag_len_mean, frag_len_dev, frag_len_max, frag_dist_on, frag_dist_mn_mean, frag_dist_mn_cov, frag_dist_prob, protein_size, skewness):
 		"""Creates n_fragments in this protein"""
 		if(self.fragment_count == 0 ):
@@ -566,7 +567,7 @@ class Protein(object):
 			elif (frag_count_scaling == "beta") :#nfrags scaling via Laplace, beta not changed
 				self.number_frags = self._scale_laplace(self.number_frags, read_frac, frag_count_lp_sc)
 			elif (frag_count_scaling == "frag") :#nfrags scaling via lognorm distribution, number_frags not changed
-				read_frac = self._scale_lognorm(self.number_frags, read_frac, frag_count_ln_si, frag_count_ln_sc)
+				read_frac = self._scale_exp(self.number_frags, read_frac, frag_count_ex_lo, frag_count_ex_sc)
 			else:
 				print("Unknown scaling method, %s, please choose 'none','frag' or 'beta', exiting now" % (frag_count_scaling))
 				exit(1)
@@ -639,9 +640,9 @@ class Protein(object):
 			
 		return nfrags
 		
-	def _scale_lognorm(self, nfrags, read_frac, sigma, scale):
+	def _scale_lognorm(self, nfrags, read_frac, sigma, loc, scale):
 		"""Scale number_frags result based on Lognorm distribution"""
-		loc=scale*-1
+		#loc=scale*-1
 		
 		top_beta_scale = sp.stats.lognorm.pdf(1,s=sigma,loc=loc, scale=scale)#to get to 100% at size 10
 		scale_factor=1/top_beta_scale #this is the factor to set beta_frac to 100% at 1
@@ -652,7 +653,23 @@ class Protein(object):
 		else:
 			read_frac = ((read_frac-0.5)*beta_scale)+0.5 #center and scale it based on beta_scale from exponential distri, so reduce to 0.5 for high values
 		return read_frac
+
+	def _scale_exp(self, nfrags, read_frac, loc, scale):
+		"""Scale number_frags result based on Exponential distribution"""
 		
+		top_beta_scale = sp.stats.expon.pdf(loc,loc=loc, scale=scale)#to get to 100% at size loc
+		scale_factor=1/top_beta_scale #this is the factor to set beta_frac to 100% at 1
+		beta_scale = sp.stats.expon.pdf(nfrags,loc=loc, scale=scale) *scale_factor
+		
+		read_frac_old = read_frac
+		
+		if(beta_scale == 0):
+			read_frac = read_frac 
+		else:
+			read_frac = ((read_frac-0.5)*beta_scale)+0.5 #center and scale it based on beta_scale from exponential distribution, we do this to reduce the read_frac towards 0.5 for high values
+		
+		return read_frac
+
 	def _get_factor(self, x, loc=0.5, scale=0.2):
 		"""laplace distribution for distribution into replicates"""
 		return laplace.pdf(x, loc, scale)
@@ -980,13 +997,14 @@ def _init_add_domains_mp(counter, parametersobj, results_list):
 			break
 		sequence, valid_regions, bins, n_reps_sample1, n_reps_sample2, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 		frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-		frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, \
+		frag_count_scaling, frag_count_lp_sc, frag_count_ex_lo, frag_count_ex_sc, beta_values, frag_len_mean, frag_len_dev, skewness, \
 		valid_regions_array = parametersobj.get_all()
 		
 		domainobj = Domain(n_reps_sample1, n_reps_sample2, domain_number) #init one domain
 		domainobj.init_proteins(sequence, valid_regions, bins, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 		frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-		frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array) #init all proteins in that domain
+		frag_count_scaling, frag_count_lp_sc, frag_count_ex_lo, frag_count_ex_sc, beta_values, frag_len_mean, frag_len_dev, skewness, \
+		valid_regions_array) #init all proteins in that domain
 		
 		tmp_results_list.append(domainobj) #save object in tmp list
 	
@@ -1002,13 +1020,14 @@ def _init_add_domains(parametersobj, n_domains_start, n_domains):
 	for domain_number in lrange(n_domains_start + 1, n_domains_start + n_domains + 1):
 		sequence, valid_regions, bins, n_reps_sample1, n_reps_sample2, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 		frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-		frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, \
+		frag_count_scaling, frag_count_lp_sc, frag_count_ex_lo, frag_count_ex_sc, beta_values, frag_len_mean, frag_len_dev, skewness, \
 		valid_regions_array = parametersobj.get_all()
 		
 		domainobj = Domain(n_reps_sample1, n_reps_sample2, domain_number) #init one domain
 		domainobj.init_proteins(sequence, valid_regions, bins, prot_count_n, prot_count_p, protein_size, frag_len_max, frag_dist_on, frag_dist_mn_mean, \
 		frag_dist_mn_cov, frag_dist_prob, prot_dist_mn_mean, prot_dist_mn_cov, frag_count_sh, frag_count_sc, frag_count_op, frag_count_om, frag_count_os, \
-		frag_count_scaling, frag_count_lp_sc, frag_count_ln_si, frag_count_ln_sc, beta_values, frag_len_mean, frag_len_dev, skewness, valid_regions_array) #init all proteins in that domain
+		frag_count_scaling, frag_count_lp_sc, frag_count_ex_lo, frag_count_ex_sc, beta_values, frag_len_mean, frag_len_dev, skewness, \
+		valid_regions_array) #init all proteins in that domain
 		
 		results_list.append(domainobj) #save object in tmp list
 		_progress_bar(domain_count, n_domains)
@@ -1373,10 +1392,10 @@ if __name__ == '__main__':
 	parser.add_option("--frag-count-om", default=6., dest="frag_count_om", type="float", help="Mean of lognormal distribution for fragment counts of outliers [default: %default]")
 	parser.add_option("--frag-count-os", default=0.5, dest="frag_count_os", type="float", help="Sigma of lognormal distribution for fragment counts of outliers [default: %default]")
 	
-	parser.add_option("--frag-count-scaling", default="none", dest="frag_count_scaling", type="string", help="Scaling of fragment distribution, no scaling, scaling of beta result based on fragment counts (with lognorm) or scaling of fragment counts based on beta result (with laplace) : none , frag , beta [default: %default]")
-	parser.add_option("--frag-count-lp-scale", default=0.1, dest="frag_count_lp_sc", type="float", help="Scale for Laplace distribution if frag-count-scaling is beta [default: %default]")
-	parser.add_option("--frag-count-ln-sigma", default=0.9, dest="frag_count_ln_si", type="float", help="Sigma for lognorm distribution if frag-count-scaling is frag [default: %default]")
-	parser.add_option("--frag-count-ln-scale", default=100, dest="frag_count_ln_sc", type="float", help="Scale for lognorm distribution if frag-count-scaling is frag [default: %default]")
+	parser.add_option("--frag-count-scaling", default="none", dest="frag_count_scaling", type="string", help="Scaling of fragment distribution, no scaling, scaling of beta result based on fragment counts (with exp) or scaling of fragment counts based on beta result (with laplace) : none , frag , beta [default: %default]")
+	parser.add_option("--frag-count-lp-scale", default=0.1, dest="frag_count_lp_sc", type="float", help="Scale for Laplace distribution if frag-count-scaling is frag [default: %default]")
+	parser.add_option("--frag-count-ex-loc", default=10, dest="frag_count_ex_lo", type="float", help="Loc for exponential distribution if frag-count-scaling is beta [default: %default]")
+	parser.add_option("--frag-count-ex-scale", default=100, dest="frag_count_ex_sc", type="float", help="Scale for exponential distribution if frag-count-scaling is beta [default: %default]")
 	
 	parser.add_option("--frag-dist-on", default=False, action="store_true", dest="frag_dist_on", help="Use multivariate normal distribution for fragment shifts to create peak chapes, shifts are limited by prot-size. The final shift is: postion of peak - prot_size + sampling from distribution [default: %default]")
 	parser.add_option("--frag-dist-prob", default=[0.5, 0.5], dest="frag_dist_prob", type="string", action='callback', callback=_callback_list_float,\
@@ -1523,8 +1542,8 @@ if __name__ == '__main__':
 			chromosomeobj.init_domains(domain_count, n_domains, options.prot_count_n, options.prot_count_p, options.protein_size, options.frag_len_max,\
 			options.frag_dist_on, options.frag_dist_mn_mean, options.frag_dist_mn_cov,  options.frag_dist_prob, options.prot_dist_mn_mean, options.prot_dist_mn_cov,\
 			options.frag_count_sh, options.frag_count_sc, options.frag_count_op, options.frag_count_om, options.frag_count_os, options.frag_count_scaling, \
-			options.frag_count_lp_sc, options.frag_count_ln_si, options.frag_count_ln_sc, options.beta_values, options.frag_len_mean, options.frag_len_dev, \
-			options.skewness)
+			options.frag_count_lp_sc, options.frag_count_ex_lo, options.frag_count_ex_sc, options.beta_values, \
+			options.frag_len_mean, options.frag_len_dev, options.skewness)
 			
 			domain_count += n_domains
 
