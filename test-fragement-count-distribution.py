@@ -99,7 +99,7 @@ def _scale_lognorm( nfrags, read_frac, sigma, loc, scale):
 	else:
 		read_frac = ((read_frac-0.5)*beta_scale)+0.5 #center and scale it based on beta_scale from lognorm distribution, we do this to reduce the read_frac towards 0.5 for high values
 	
-	print("nfrags: %s read_frac_in: %s scaling_factor: %s read_frac_out: %s" % (nfrags ,read_frac_old, beta_scale, read_frac))
+	#print("nfrags: %s read_frac_in: %s scaling_factor: %s read_frac_out: %s" % (nfrags ,read_frac_old, beta_scale, read_frac))
 	return read_frac
 
 def _scale_exp(nfrags, read_frac, loc, scale):
@@ -220,7 +220,9 @@ if __name__ == '__main__':
 			xma.append(x) 
 			y=math.log(entry[0]/entry[1],2)#log2 fold-change
 			yma.append(y) 
-
+	
+	print("max: sum %s s1 %s s2 %s" % (max(sumcounts),max(counts1), max(counts2)))
+	
 	#hist and ma-plot
 	fixed_range=[0,200]
 	fixed_bins=500
@@ -235,5 +237,6 @@ if __name__ == '__main__':
 	axs[3].set_title('MA-plot')
 	axs[3].scatter(xma, yma)
 	
+
 	plt.subplots_adjust(hspace = 0.4)
 	plt.show()
