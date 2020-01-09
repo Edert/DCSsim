@@ -566,7 +566,7 @@ class Protein(object):
 				read_frac = read_frac
 			elif (frag_count_scaling == "beta") :#nfrags scaling via Laplace, beta not changed
 				self.number_frags = self._scale_laplace(self.number_frags, read_frac, frag_count_lp_sc)
-			elif (frag_count_scaling == "frag") :#nfrags scaling via lognorm distribution, number_frags not changed
+			elif (frag_count_scaling == "frag") :#nfrags scaling via exp distribution, number_frags not changed
 				read_frac = self._scale_exp(self.number_frags, read_frac, frag_count_ex_lo, frag_count_ex_sc)
 			else:
 				print("Unknown scaling method, %s, please choose 'none','frag' or 'beta', exiting now" % (frag_count_scaling))
