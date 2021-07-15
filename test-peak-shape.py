@@ -114,7 +114,7 @@ if __name__ == '__main__':
 	parser.add_option("--frag-dist-on", default=False, action="store_true", dest="frag_dist_on", help="Use multivariate normal distribution for fragment shifts to create peak shapes, shifts are limited by prot-size. The final shift is: position of peak - prot_size + sampling from distribution  [default: %default]")
 	
 	parser.add_option("--frag-dist-prob", default=[0.5, 0.5], dest="frag_dist_prob", type="string", action='callback', callback=_callback_list_float,\
-	help="Probability fo each of the multivariate normal distributions to be chosen [default: %default]")
+	help="Probability for each of the multivariate normal distributions to be chosen [default: %default]")
 	parser.add_option("--frag-dist-muno-mean", default=[20, 100], dest="frag_dist_mn_mean", type="string", action='callback', callback=_callback_list,\
 	help="Means of multivariate normal distribution for the shifts of fragments, separator: ',' eg. \"300, 1800\" [default: %default]")
 	parser.add_option("--frag-dist-muno-cov", default=[[100,0],[0,500]], dest="frag_dist_mn_cov", type="string", action='callback', callback=_callback_matrix,\
