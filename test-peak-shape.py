@@ -111,7 +111,7 @@ if __name__ == '__main__':
 	parser.add_option("--frag-len-dev", default=20, dest="frag_len_dev", type="float", help="Set deviation of fragments' length [default: %default]")
 	parser.add_option("--frag-len-max", default=1000, dest="frag_len_max", type="int", help="Set maximum of fragments' length [default: %default]")
 	
-	parser.add_option("--frag-dist-on", default=False, action="store_true", dest="frag_dist_on", help="Use multivariate normal distribution for fragment shifts to create peak chapes, shifts are limited by prot-size. The final shift is: postion of peak - prot_size + sampling from distribution  [default: %default]")
+	parser.add_option("--frag-dist-on", default=False, action="store_true", dest="frag_dist_on", help="Use multivariate normal distribution for fragment shifts to create peak shapes, shifts are limited by prot-size. The final shift is: position of peak - prot_size + sampling from distribution  [default: %default]")
 	
 	parser.add_option("--frag-dist-prob", default=[0.5, 0.5], dest="frag_dist_prob", type="string", action='callback', callback=_callback_list_float,\
 	help="Probability fo each of the multivariate normal distributions to be chosen [default: %default]")
