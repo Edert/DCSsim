@@ -1392,14 +1392,14 @@ if __name__ == '__main__':
 	parser.add_option("--frag-count-om", default=6., dest="frag_count_om", type="float", help="Mean of lognormal distribution for fragment counts of outliers [default: %default]")
 	parser.add_option("--frag-count-os", default=0.5, dest="frag_count_os", type="float", help="Sigma of lognormal distribution for fragment counts of outliers [default: %default]")
 	
-	parser.add_option("--frag-count-scaling", default="none", dest="frag_count_scaling", type="string", help="Scaling of fragment distribution, no scaling, scaling of beta result based on fragment counts (with exp) or scaling of fragment counts based on beta result (with laplace) : none , frag , beta [default: %default]")
+	parser.add_option("--frag-count-scaling", default="none", dest="frag_count_scaling", type="string", help="Scaling of fragment distribution, no scaling, scaling of beta result based on fragment counts (with exponential distribution) or scaling of fragment counts based on beta result (with Laplace distribution): none, frag, beta [default: %default]")
 	parser.add_option("--frag-count-lp-scale", default=0.1, dest="frag_count_lp_sc", type="float", help="Scale for Laplace distribution if frag-count-scaling is frag [default: %default]")
 	parser.add_option("--frag-count-ex-loc", default=10, dest="frag_count_ex_lo", type="float", help="Loc for exponential distribution if frag-count-scaling is beta [default: %default]")
 	parser.add_option("--frag-count-ex-scale", default=100, dest="frag_count_ex_sc", type="float", help="Scale for exponential distribution if frag-count-scaling is beta [default: %default]")
 	
-	parser.add_option("--frag-dist-on", default=False, action="store_true", dest="frag_dist_on", help="Use multivariate normal distribution for fragment shifts to create peak chapes, shifts are limited by prot-size. The final shift is: postion of peak - prot_size + sampling from distribution [default: %default]")
+	parser.add_option("--frag-dist-on", default=False, action="store_true", dest="frag_dist_on", help="Use multivariate normal distribution for fragment shifts to create peak shapes, shifts are limited by prot-size. The final shift is: postion of peak - prot_size + sampling from distribution [default: %default]")
 	parser.add_option("--frag-dist-prob", default=[0.5, 0.5], dest="frag_dist_prob", type="string", action='callback', callback=_callback_list_float,\
-	help="Probability fo each of the multivariate normal distributions to be chosen [default: %default]")
+	help="Probability for each of the multivariate normal distributions to be chosen [default: %default]")
 	parser.add_option("--frag-dist-muno-mean", default=[20, 100], dest="frag_dist_mn_mean", type="string", action='callback', callback=_callback_list,\
 	help="Means of multivariate normal distribution for the shifts of fragments, separator: ',' eg. \"300, 1800\" [default: %default]")
 	parser.add_option("--frag-dist-muno-cov", default=[[100,0],[0,500]], dest="frag_dist_mn_cov", type="string", action='callback', callback=_callback_matrix,\
