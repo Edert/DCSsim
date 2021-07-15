@@ -4,7 +4,7 @@
 """
 %prog <INT> [options]
 
-Creates histograms of <INT> fragment distanzes and peak shapes
+Creates histograms of <INT> fragment distances and peak shapes
 
 @author:  Thomas Eder
 """
