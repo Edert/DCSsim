@@ -1368,7 +1368,7 @@ if __name__ == '__main__':
 	parser = HelpfulOptionParser(usage=__doc__)
 	
 	parser.add_option("-c", "--chrom", default='chr1', dest="chrom", type="string", help="Chromosome used for simulation [default: %default]")
-	parser.add_option("-d", "--domain-counts", default=1000, dest="n_domains", type="int", help="Number of domains with DPs [default: %default]")
+	parser.add_option("-d", "--domain-counts", default=1000, dest="n_domains", type="int", help="Number of domains/clusters with DPs [default: %default]")
 	parser.add_option("-l", "--length", default=50, dest="read_length", type="int", help="Read length [default: %default]")
 	parser.add_option("-p", "--prefix", default='sim', dest="prefix", type="string", help="Prefix for output files [default: %default]")
 	
