@@ -1,8 +1,12 @@
-# DCSsim
+# Simulate differential ChIP-seq regions
 
-DCSsim.py FASTA BED INT [options]
+DCSsim simulates differential ChIP-seq data for two samples (e.g. treatment and control). The results are sequence reads in fasta format for the two samples with n (user defined) replicates plus a report as pdf. DCSsim supports multiple threads and is able to work in batches to account for limited memory. We strongly encourage new users to start with the two parameter simulation scripts test-peak-shape.py and test-fragment-count-distribution.py. These can be applied to test the parameters for sampling without creating reads but output diverse histograms and plots.
 
-Based on the provided FASTA sequence differential peaks (DPs) are simulated, restricted to if --is_white_list or constrained by the specified BED-file. INT defines the number of simulated replicates of the two samples.
+
+## DCSsim ##
+**DCSsim.py** \<FASTA\> \<BED\> \<INT\> [options]
+
+Based on the provided \<FASTA\> sequence differential peaks (DPs) are simulated, restricted to if --is_white_list or constrained by the specified \<BED\>-file. \<INT\> defines the number of simulated replicates of the two samples.
 
 Options:
 
@@ -93,4 +97,57 @@ Options:
 -t, --threads	Number of threads to use, default=1
 
 --batch-size	Number of domains/clusters calculated in one batch to limit memory usage, default=10000
+
+## test-fragement-count-distribution ##
+**test-fragement-count-distribution.py** \<INT\> \<INT\> [options]
+	
+Creates a histogram of \<INT\> protein interactions sites of \<INT\> replicates for two samples, for all samples, for sample1 and sample2 and creates an MA-plot based on the supplied beta-values
+	
+Options:
+	
+--frag-count-sh	Shape of gamma distribution for fragment counts, default=2.2
+	
+--frag-count-sc	Scale of gamma distribution for fragment counts, default=20.1
+	
+--frag-count-op	Probability for fragment counts being outliers, default=0.01
+	
+--frag-count-om	Mean of lognormal distribution for fragment counts of outliers, default=6.0
+	
+--frag-count-os	Sigma of lognormal distribution for fragment counts of outliers, default=0.5
+	
+--frag-count-scaling	Scaling of fragment distribution, no scaling, scaling of beta result based on fragment counts (with exponential distribution) or scaling of fragment
+counts based on beta result (with Laplace distribution): none, frag, beta, default="none"
+	
+--frag-count-lp-scale	Scale for Laplace distribution if frag-count-scaling is frag, default=0.1
+	
+--frag-count-ex-loc	Loc for exponential distribution if frag-count-scaling is beta, default=10
+	
+--frag-count-ex-scale	Scale for exponential distribution if frag-count-scaling is beta, default=100
+	
+--beta	Alpha and Beta of Beta-distribution, default=[0.5, 0.5]
+
+## test-peak-shape ##
+
+**test-peak-shape.py** \<INT\> [options]
+	
+Creates histograms of \<INT\> fragment distances and peak shapes
+	
+Options:
+	
+--prot-size	Protein size (this parameter limits the fragment shifts), default=150
+	
+--frag-len-mean	Set mean of fragments' length, default=200
+	
+--frag-len-dev	Set deviation of fragments' length, default=20
+	
+--frag-len-max	Set maximum of fragments' length , default=1000	
+	
+--frag-dist-on	Use multivariate normal distribution for fragment shifts to create peak shapes, shifts are limited by prot-size. The final shift is: position of peak - prot_size + sampling from distribution, default=False
+	
+--frag-dist-prob	Probability for each of the multivariate normal distributions to be chosen, default=[0.5, 0.5]
+	
+--frag-dist-muno-mean	Means of multivariate normal distribution for the shifts of fragments, separator: ',' eg. "300, 1800", default=[20, 100]
+	
+--frag-dist-muno-cov	Covariance of multivariate normal distribution for the shifts of fragments, separator: ',' and ';'  eg. "1000,0;0,5000", default=[[100,0],[0,500]]
+
 
