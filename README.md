@@ -151,3 +151,9 @@ Options:
 --frag-dist-muno-cov	Covariance of multivariate normal distribution for the shifts of fragments, separator: ',' and ';'  eg. "1000,0;0,5000", default=[[100,0],[0,500]]
 
 
+## Citation ##
+
+If you are using this tool or parts of it in your research, please cite:
+
+Eder, T., Grebien, F. Comprehensive assessment of differential ChIP-seq tools guides optimal algorithm selection. Genome Biol 23, 119 (2022). https://doi.org/10.1186/s13059-022-02686-y
+
